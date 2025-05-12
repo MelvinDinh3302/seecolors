@@ -24,10 +24,10 @@ export default function ImagePickerExample() {
 
   return (
     <View style={styles.container}>
-      <Button title="Pick an image" onPress={pickImage} />
-      <View style={{ marginVertical: 10 }}>
+      <View style={{ marginBottom: 10 }}>
         {image && <Image source={{ uri: image }} style={styles.image} />}
       </View>
+      <Button title="Pick an image" onPress={pickImage} />
       <Picker
         selectedValue={type}
         onValueChange={(itemValue) => setType(itemValue)}
@@ -46,11 +46,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: 'white',
+    paddingTop: 50,
   },
   image: {
     width: width,
-    height: height * 0.7,
+    height: height * 0.5,
     resizeMode: 'contain', 
   },
   picker: {
