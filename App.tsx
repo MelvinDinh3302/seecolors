@@ -1,62 +1,24 @@
-import { useState } from 'react';
-import { Button, Image, View, StyleSheet, Dimensions } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import PickImageScreen from './PickImageScreen';
+import PreviewScreen from './PreviewScreen';
 
-const { width, height } = Dimensions.get('window');
+const Stack = createNativeStackNavigator();
 
-export default function ImagePickerExample() {
+export default function App() {
   const [image, setImage] = useState<string | null>(null);
-  const [type, setType] = useState('d');
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
 
   return (
-    <View style={styles.container}>
-      <View style={{ marginBottom: 10 }}>
-        {image && <Image source={{ uri: image }} style={styles.image} />}
-      </View>
-      <Button title="Pick an image" onPress={pickImage} />
-      <Picker
-        selectedValue={type}
-        onValueChange={(itemValue) => setType(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Deuteranopia" value="d" />
-        <Picker.Item label="Protanopia" value="p" />
-        <Picker.Item label="Tritanopia" value="t" />
-      </Picker>
-    </View>
-
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="PickImage">
+        <Stack.Screen name="PickImage">
+          {(props) => <PickImageScreen {...props} setImage={setImage} />}
+        </Stack.Screen>
+        <Stack.Screen name="Preview">
+          {(props) => <PreviewScreen {...props} image={image} setImage={setImage} />}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: 'white',
-    paddingTop: 50,
-  },
-  image: {
-    width: width,
-    height: height * 0.5,
-    resizeMode: 'contain', 
-  },
-  picker: {
-    height: 50, 
-    width: width * 0.5,
-  }
-});
