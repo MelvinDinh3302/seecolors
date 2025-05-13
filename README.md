@@ -18,6 +18,12 @@ For the effectiveness of the daltonization algorithm used in this project, see m
 
 ## Proof of Concept
 
-| iOS | Android |
-|-----|---------|
-| [iOS Demo](demo/iosdemo.mp4) | [Android Demo](demo/androiddemo.mp4) |
+### iOS Demo
+https://github.com/user-attachments/assets/e8b158f1-4c47-4e77-a5b6-a5354336172d
+
+### Android Demo
+https://github.com/user-attachments/assets/b9990f91-f27c-44b3-bbe7-4035dd027a38
+
+
+
+
