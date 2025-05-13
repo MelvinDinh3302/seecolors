@@ -87,6 +87,7 @@ export default function PreviewScreen({ image, setImage }: any) {
       });
   
       setProcessedImageUri(fileUri + `?t=${Date.now()}`);
+      setTab('daltonized');
     } catch (err: any) {
       console.error('Error:', err);
       Alert.alert('Error', err.message);
