@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Button, StyleSheet, Dimensions, ActivityIndicator, Alert } from 'react-native';
+import { View, Image, Button, StyleSheet, Dimensions, ActivityIndicator, Alert, TouchableOpacity, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
@@ -13,6 +13,7 @@ export default function PreviewScreen({ image, setImage }: any) {
   const [loading, setLoading] = useState(false);
   const [imgWidth, setImgWidth] = useState<number>(0);
   const [imgHeight, setImgHeight] = useState<number>(0);
+  const [tab, setTab] = useState('original');
 
   useEffect(() => {
     if (image) {
@@ -30,7 +31,7 @@ export default function PreviewScreen({ image, setImage }: any) {
   
     try {
       setLoading(true);
-      
+
       const MAX_WIDTH = 1200;
       const MAX_HEIGHT = 1600;
       
@@ -39,7 +40,7 @@ export default function PreviewScreen({ image, setImage }: any) {
       if (imgWidth > MAX_WIDTH || imgHeight > MAX_HEIGHT) {
         actions.push({
           resize: {
-            width: imgWidth > imgHeight ? MAX_WIDTH : undefined,
+            width: imgWidth >= imgHeight ? MAX_WIDTH : undefined,
             height: imgHeight > imgWidth ? MAX_HEIGHT : undefined
           }
         });
@@ -87,6 +88,7 @@ export default function PreviewScreen({ image, setImage }: any) {
   
       setProcessedImageUri(fileUri + `?t=${Date.now()}`);
     } catch (err: any) {
+      console.error('Error:', err);
       Alert.alert('Error', err.message);
     } finally {
       setLoading(false);
@@ -95,7 +97,36 @@ export default function PreviewScreen({ image, setImage }: any) {
 
   return (
     <View style={styles.container}>
-      {image && <Image source={{ uri: image }} style={styles.image} />}
+
+      {image && (
+        <>
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            <TouchableOpacity 
+              onPress={() => setTab('original')} 
+              style={[styles.tabButton, tab === 'original' && styles.activeTab]}
+            >
+              <Text>Original</Text>
+            </TouchableOpacity>
+            
+            {processedImageUri && (
+              <TouchableOpacity 
+                onPress={() => setTab('daltonized')} 
+                style={[styles.tabButton, tab === 'daltonized' && styles.activeTab]}
+              >
+                <Text>Daltonized</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <Image
+            source={{ uri: tab === 'original' ? image : processedImageUri || image }}
+            style={styles.image}
+          />
+        </>
+      )}
+
+      {loading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
+
       <Button title="Upload and Process" onPress={handleUpload} />
       <Picker
         selectedValue={type}
@@ -106,10 +137,6 @@ export default function PreviewScreen({ image, setImage }: any) {
         <Picker.Item label="Protanopia" value="p" />
         <Picker.Item label="Tritanopia" value="t" />
       </Picker>
-      {loading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
-      {processedImageUri && (
-        <Image source={{ uri: processedImageUri }} style={styles.image} />
-      )}
     </View>
   );
 }
@@ -132,4 +159,14 @@ const styles = StyleSheet.create({
     height: 50,
     width: width * 0.6,
   },
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 2,
+    borderColor: '#ccc',
+  },
+  activeTab: {
+    borderColor: '#000',
+  },  
 });
