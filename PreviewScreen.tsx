@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Image, Button, StyleSheet, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as FileSystem from 'expo-file-system';
@@ -11,6 +11,19 @@ export default function PreviewScreen({ image, setImage }: any) {
   const [type, setType] = useState('d');
   const [processedImageUri, setProcessedImageUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [imgWidth, setImgWidth] = useState<number>(0);
+  const [imgHeight, setImgHeight] = useState<number>(0);
+
+  useEffect(() => {
+    if (image) {
+      Image.getSize(image, (width, height) => {
+        setImgWidth(width);
+        setImgHeight(height);
+      }, (error) => {
+        console.error("Couldn't get image dimensions:", error);
+      });
+    }
+  }, [image]);
 
   const handleUpload = async () => {
     if (!image) return;
@@ -18,10 +31,24 @@ export default function PreviewScreen({ image, setImage }: any) {
     try {
       setLoading(true);
       
+      const MAX_WIDTH = 1200;
+      const MAX_HEIGHT = 1600;
+      
+      const actions = [];
+      
+      if (imgWidth > MAX_WIDTH || imgHeight > MAX_HEIGHT) {
+        actions.push({
+          resize: {
+            width: imgWidth > imgHeight ? MAX_WIDTH : undefined,
+            height: imgHeight > imgWidth ? MAX_HEIGHT : undefined
+          }
+        });
+      }
+
       const manipulatedImage = await ImageManipulator.manipulateAsync(
         image,
-        [{ resize: { width: 1200 } }],
-        { 
+        actions,
+        {
           compress: 0.7,
           format: ImageManipulator.SaveFormat.JPEG
         }
