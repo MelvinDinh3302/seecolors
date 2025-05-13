@@ -3,6 +3,7 @@ import { View, Image, Button, StyleSheet, Dimensions, ActivityIndicator, Alert }
 import { Picker } from '@react-native-picker/picker';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,11 +17,20 @@ export default function PreviewScreen({ image, setImage }: any) {
   
     try {
       setLoading(true);
-  
+      
+      const manipulatedImage = await ImageManipulator.manipulateAsync(
+        image,
+        [{ resize: { width: 1200 } }],
+        { 
+          compress: 0.7,
+          format: ImageManipulator.SaveFormat.JPEG
+        }
+      );
+
       const formData = new FormData();
       formData.append('type', type);
       formData.append('image', {
-        uri: image,
+        uri: manipulatedImage.uri,
         name: 'image.jpg',
         type: 'image/jpeg',
       } as any);
@@ -34,7 +44,8 @@ export default function PreviewScreen({ image, setImage }: any) {
       });
   
       if (!response.ok) {
-        throw new Error('Upload failed');
+        const errorData = await response.text();
+        throw new Error(`Upload failed: ${response.status} - ${errorData}`);
       }
   
       const blob = await response.blob();
