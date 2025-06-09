@@ -3,27 +3,26 @@ import { View, Image, StyleSheet, Dimensions, ActivityIndicator, Alert, Touchabl
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { Picker } from '@react-native-picker/picker';
-// import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
+import ImageViewing from 'react-native-image-viewing';
 
 const { width, height } = Dimensions.get('window');
 
 export default function PreviewScreen({ image, setImage }: any) {
-  const [type, setType] = useState('d');
-
-  // const [open, setOpen] = useState(false);
-  // const [value, setValue] = useState('d');
-  // const [items, setItems] = useState([
-  //   { label: 'Deuteranopia', value: 'd' },
-  //   { label: 'Protanopia', value: 'p' },
-  //   { label: 'Tritanopia', value: 't' },
-  // ]);
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState('d');
+  const [items, setItems] = useState([
+    { label: 'Deuteranopia', value: 'd' },
+    { label: 'Protanopia', value: 'p' },
+    { label: 'Tritanopia', value: 't' },
+  ]);
 
   const [processedImageUri, setProcessedImageUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [imgWidth, setImgWidth] = useState<number>(0);
   const [imgHeight, setImgHeight] = useState<number>(0);
   const [tab, setTab] = useState('original');
+  const [isLightboxVisible, setIsLightboxVisible] = useState(false);
 
   useEffect(() => {
     if (image) {
@@ -66,7 +65,7 @@ export default function PreviewScreen({ image, setImage }: any) {
       );
 
       const formData = new FormData();
-      formData.append('type', type);
+      formData.append('type', value);
       formData.append('image', {
         uri: manipulatedImage.uri,
         name: 'image.jpg',
@@ -128,29 +127,45 @@ export default function PreviewScreen({ image, setImage }: any) {
               </TouchableOpacity>
             )}
           </View>
-
-          <Image
-            source={{ uri: tab === 'original' ? image : processedImageUri || image }}
-            style={styles.image}
-          />
+          
+          <TouchableOpacity onPress={() => setIsLightboxVisible(true)}>
+            <Image
+              source={{ uri: tab === 'original' ? image : processedImageUri || image }}
+              style={styles.image}
+            />
+          </TouchableOpacity>
         </>
       )}
 
       {loading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
 
-      <TouchableOpacity style={styles.button} onPress={handleUpload}>
+      <TouchableOpacity 
+        style={[styles.button, loading && styles.buttonDisabled]} 
+        onPress={handleUpload}
+        disabled={loading}
+      >
         <Text style={styles.buttonText}>Upload and Process</Text>
       </TouchableOpacity>
 
-      <Picker
-        selectedValue={type}
-        onValueChange={(itemValue) => setType(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Deuteranopia" value="d" />
-        <Picker.Item label="Protanopia" value="p" />
-        <Picker.Item label="Tritanopia" value="t" />
-      </Picker>
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
+        listMode="SCROLLVIEW"
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+      />
+
+    <ImageViewing
+      images={[{ uri: tab === 'original' ? image : processedImageUri || image }]}
+      imageIndex={0}
+      visible={isLightboxVisible}
+      onRequestClose={() => setIsLightboxVisible(false)}
+    />
+
     </View>
   );
 }
@@ -169,9 +184,14 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginVertical: 10,
   },
-  picker: {
-    height: 50,
-    width: width * 0.6,
+  dropdown: {
+    borderColor: '#ccc',
+    width: width * 0.85,
+    alignSelf: 'center',
+  },
+  dropdownContainer: {
+    width: width * 0.85,
+    alignSelf: 'center',
   },
   tabButton: {
     flex: 1,
@@ -188,7 +208,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 12,
+    marginTop: 10,
+  },
+  buttonDisabled: {
+    backgroundColor: '#cccccc',
+    opacity: 0.6,
   },
   buttonText: {
     color: '#ffffff',
