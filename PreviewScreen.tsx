@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Button, StyleSheet, Dimensions, ActivityIndicator, Alert, TouchableOpacity, Text } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Image, StyleSheet, Dimensions, ActivityIndicator, Alert, TouchableOpacity, Text } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
 import * as ImageManipulator from 'expo-image-manipulator';
+import { Picker } from '@react-native-picker/picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 
 const { width, height } = Dimensions.get('window');
 
 export default function PreviewScreen({ image, setImage }: any) {
   const [type, setType] = useState('d');
+
+  // const [open, setOpen] = useState(false);
+  // const [value, setValue] = useState('d');
+  // const [items, setItems] = useState([
+  //   { label: 'Deuteranopia', value: 'd' },
+  //   { label: 'Protanopia', value: 'p' },
+  //   { label: 'Tritanopia', value: 't' },
+  // ]);
+
   const [processedImageUri, setProcessedImageUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [imgWidth, setImgWidth] = useState<number>(0);
@@ -128,7 +138,10 @@ export default function PreviewScreen({ image, setImage }: any) {
 
       {loading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
 
-      <Button title="Upload and Process" onPress={handleUpload} />
+      <TouchableOpacity style={styles.button} onPress={handleUpload}>
+        <Text style={styles.buttonText}>Upload and Process</Text>
+      </TouchableOpacity>
+
       <Picker
         selectedValue={type}
         onValueChange={(itemValue) => setType(itemValue)}
@@ -148,7 +161,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingTop: 50,
-    backgroundColor: 'white',
+    backgroundColor: '#f0f4f8',
   },
   image: {
     width: width,
@@ -168,6 +181,19 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   activeTab: {
-    borderColor: '#000',
-  },  
+    borderColor: '#212529',
+  },
+  button: {
+    backgroundColor: '#007bff',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 });

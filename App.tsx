@@ -11,7 +11,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="PickImage">
+      <Stack.Navigator initialRouteName="PickImage" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="PickImage">
           {(props) => <PickImageScreen {...props} setImage={setImage} />}
         </Stack.Screen>
