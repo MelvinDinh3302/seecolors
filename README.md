@@ -1,4 +1,4 @@
-# See Colors
+# See Colors (In Development)
 
 **See Colors** is a cross-platform mobile app designed to enhance image visibility for users with color blindness. Simply take or upload a photo, and the app transforms its colors for better visibility.
 
