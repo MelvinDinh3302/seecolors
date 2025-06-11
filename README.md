@@ -1,4 +1,4 @@
-# See Colors (Beta)
+# See Colors
 
 **See Colors** is a cross-platform mobile app designed to enhance image visibility for users with color blindness. Simply take or upload a photo, and the app transforms its colors for better visibility.
 
@@ -12,9 +12,15 @@ For the effectiveness of the daltonization algorithm used in this project, see m
 - **Easy Comparison**: Side-by-side before/after view.
 - **Simple Interface**: Clean and minimalist UI.
 
-## TODO
+## Tech Stack
 
-- Improve app styling.
+- React Native
+- TypeScript
+- Flask (Python) for backend API
+- Expo ImageManipulator
+- Expo FileSystem
+- Expo ImagePicker
+- Lottie React Native
 
 ## Demo
 
