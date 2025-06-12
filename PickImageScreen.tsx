@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRef, useEffect } from 'react';
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import LottieView from 'lottie-react-native';
 
@@ -20,7 +20,7 @@ export default function PickImageScreen({ navigation, setImage }: any) {
   const takePhoto = async () => {
     const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
     if (cameraPermission.granted === false) {
-      alert('Camera permission is required to take a photo');
+      Alert.alert('Permission denied', 'Camera permission is required to take a photo.');
       return;
     }
 

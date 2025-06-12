@@ -24,7 +24,8 @@
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-image-viewing": "^0.2.2",
     "react-native-safe-area-context": "^5.4.0",
-    "react-native-screens": "^4.10.0"
+    "react-native-screens": "^4.10.0",
+    "expo-media-library": "~17.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

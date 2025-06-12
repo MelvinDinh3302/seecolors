@@ -5,6 +5,7 @@ import { Buffer } from 'buffer';
 import * as ImageManipulator from 'expo-image-manipulator';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ImageViewing from 'react-native-image-viewing';
+import * as MediaLibrary from 'expo-media-library';
 
 const { width, height } = Dimensions.get('window');
 
@@ -19,18 +20,18 @@ export default function PreviewScreen({ image, setImage }: any) {
   const descriptions: Record<string, { type: string; text1: string; text2: string; }> = {
     d: {
       type: 'Deuteranopia',
-      text1: 'is a form of red-green color blindness where green tones are difficult to distinguish. Greens may appear dull or confused with reds and browns.',
-      text2: 'adjusts the image to make green tones more distinguishable for affected individuals.',
+      text1: 'is a form of red-green color blindness in which green tones are difficult to tell apart. Greens may appear dull or confused with reds and browns.',
+      text2: 'adjusts the image to make green tones more discernible for affected individuals.',
     },
     p: {
       type: 'Protanopia',
-      text1: 'is a form of red-green color blindness where red tones are difficult to distinguish. Reds may appear dull or confused with greens and browns.',
-      text2: 'adjusts the image to make red tones more distinguishable for affected individuals.',
+      text1: 'is a form of red-green color blindness in which red tones are difficult to tell apart. Reds may appear dull or confused with greens and browns.',
+      text2: 'adjusts the image to make red tones more discernible for affected individuals.',
     },
     t: {
       type: 'Tritanopia',
-      text1: 'is a form of blue-yellow color blindness where blue tones are difficult to distinguish. Blues may appear dull or confused with greens and grays.',
-      text2: 'adjusts the image to make blue tones more distinguishable for affected individuals.',
+      text1: 'is a form of blue-yellow color blindness in which blue tones are difficult to tell apart. Blues may appear dull or confused with greens and grays.',
+      text2: 'adjusts the image to make blue tones more discernible for affected individuals.',
     },
   };
     
@@ -48,7 +49,8 @@ export default function PreviewScreen({ image, setImage }: any) {
         setImgWidth(width);
         setImgHeight(height);
       }, (error) => {
-        console.error("Couldn't get image dimensions:", error);
+        console.error("Image dimensions error:", error);
+        Alert.alert('Error', 'Unable to load image dimensions.');
       });
     }
   }, [image]);
@@ -99,8 +101,7 @@ export default function PreviewScreen({ image, setImage }: any) {
       });
   
       if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(`Upload failed: ${response.status} - ${errorData}`);
+        throw new Error(`Upload failed with status ${response.status}`);
       }
   
       const blob = await response.blob();
@@ -116,7 +117,7 @@ export default function PreviewScreen({ image, setImage }: any) {
       setProcessedImageUri(fileUri + `?t=${Date.now()}`);
       setTab('daltonized');
     } catch (err: any) {
-      console.error('Error:', err);
+      console.error('Image processing error:', err);
       Alert.alert('Error', err.message);
     } finally {
       setLoading(false);
