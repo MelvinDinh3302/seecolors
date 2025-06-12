@@ -16,18 +16,21 @@ export default function PreviewScreen({ image, setImage }: any) {
     { label: 'Protanopia', value: 'p' },
     { label: 'Tritanopia', value: 't' },
   ]);
-  const descriptions: Record<string, { label: string; text: string }> = {
+  const descriptions: Record<string, { type: string; text1: string; text2: string; }> = {
     d: {
-      label: 'Deuteranopia',
-      text: ' affects the green cones in the eye, making it difficult to distinguish between red and green hues.',
+      type: 'Deuteranopia',
+      text1: 'is a form of red-green color blindness where green tones are difficult to distinguish. Greens may appear dull or confused with reds and browns.',
+      text2: 'adjusts the image to make green tones more distinguishable for affected individuals.',
     },
     p: {
-      label: 'Protanopia',
-      text: ' affects the red cones, leading to confusion between red and green shades.',
+      type: 'Protanopia',
+      text1: 'is a form of red-green color blindness where red tones are difficult to distinguish. Reds may appear dull or confused with greens and browns.',
+      text2: 'adjusts the image to make red tones more distinguishable for affected individuals.',
     },
     t: {
-      label: 'Tritanopia',
-      text: ' affects the blue cones, making it hard to distinguish between blue and yellow.',
+      type: 'Tritanopia',
+      text1: 'is a form of blue-yellow color blindness where blue tones are difficult to distinguish. Blues may appear dull or confused with greens and grays.',
+      text2: 'adjusts the image to make blue tones more distinguishable for affected individuals.',
     },
   };
     
@@ -178,8 +181,13 @@ export default function PreviewScreen({ image, setImage }: any) {
 
       <View style={styles.descriptionBox}>
         <Text style={styles.descriptionText}>
-          <Text style={styles.boldText}>{descriptions[value].label}</Text>
-          {descriptions[value].text}
+          <Text style={styles.boldText}>{descriptions[value].type}</Text>
+          {' '}
+          {descriptions[value].text1}
+          {' '}
+          <Text style={styles.boldText}>See Colors</Text>
+          {' '}
+          {descriptions[value].text2}
         </Text>
       </View>
 
