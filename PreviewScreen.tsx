@@ -16,6 +16,21 @@ export default function PreviewScreen({ image, setImage }: any) {
     { label: 'Protanopia', value: 'p' },
     { label: 'Tritanopia', value: 't' },
   ]);
+  const descriptions: Record<string, { label: string; text: string }> = {
+    d: {
+      label: 'Deuteranopia',
+      text: ' affects the green cones in the eye, making it difficult to distinguish between red and green hues.',
+    },
+    p: {
+      label: 'Protanopia',
+      text: ' affects the red cones, leading to confusion between red and green shades.',
+    },
+    t: {
+      label: 'Tritanopia',
+      text: ' affects the blue cones, making it hard to distinguish between blue and yellow.',
+    },
+  };
+    
 
   const [processedImageUri, setProcessedImageUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -137,14 +152,16 @@ export default function PreviewScreen({ image, setImage }: any) {
         </>
       )}
 
-      {loading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
-
       <TouchableOpacity 
         style={[styles.button, loading && styles.buttonDisabled]} 
         onPress={handleUpload}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>Upload and Process</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
+          <Text style={styles.buttonText}>Upload and Process</Text>
+        )}
       </TouchableOpacity>
 
       <DropDownPicker
@@ -159,12 +176,19 @@ export default function PreviewScreen({ image, setImage }: any) {
         dropDownContainerStyle={styles.dropdownContainer}
       />
 
-    <ImageViewing
-      images={[{ uri: tab === 'original' ? image : processedImageUri || image }]}
-      imageIndex={0}
-      visible={isLightboxVisible}
-      onRequestClose={() => setIsLightboxVisible(false)}
-    />
+      <View style={styles.descriptionBox}>
+        <Text style={styles.descriptionText}>
+          <Text style={styles.boldText}>{descriptions[value].label}</Text>
+          {descriptions[value].text}
+        </Text>
+      </View>
+
+      <ImageViewing
+        images={[{ uri: tab === 'original' ? image : processedImageUri || image }]}
+        imageIndex={0}
+        visible={isLightboxVisible}
+        onRequestClose={() => setIsLightboxVisible(false)}
+      />
 
     </View>
   );
@@ -185,12 +209,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   dropdown: {
-    borderColor: '#ccc',
-    width: width * 0.85,
+    borderColor: '#cccccc',
+    width: width * 0.80,
     alignSelf: 'center',
   },
   dropdownContainer: {
-    width: width * 0.85,
+    width: width * 0.80,
     alignSelf: 'center',
   },
   tabButton: {
@@ -198,7 +222,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 2,
-    borderColor: '#ccc',
+    borderColor: '#cccccc',
   },
   activeTab: {
     borderColor: '#212529',
@@ -208,8 +232,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
-    marginBottom: 12,
-    marginTop: 10,
+    marginVertical: 12,
+    minWidth: width * 0.55,
+    alignItems: 'center',
   },
   buttonDisabled: {
     backgroundColor: '#cccccc',
@@ -220,5 +245,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  descriptionBox: {
+    backgroundColor: '#e9ecef',
+    borderRadius: 10,
+    padding: 12,
+    marginTop: 12,
+    width: width * 0.95,
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#ced4da',
+  },
+  descriptionText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
 });

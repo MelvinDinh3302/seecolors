@@ -47,7 +47,7 @@ export default function PickImageScreen({ navigation, setImage }: any) {
       />
 
       <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Pick an Image</Text>
+        <Text style={styles.buttonText}>Choose an Image</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={takePhoto}>
         <Text style={styles.buttonText}>Take a photo</Text>
