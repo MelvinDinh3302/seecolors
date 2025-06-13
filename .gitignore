@@ -35,3 +35,6 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Misc
+see-colors-91c9f2d22fd8.json
