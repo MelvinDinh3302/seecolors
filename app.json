@@ -15,11 +15,12 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.melvindinh.seecolors",
+      "ascAppId": "6747242092",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "photosPermission": "This app needs photos permission to select images for colorblind optimization.",
-        "cameraPermission": "This app needs camera permission to capture images for colorblind optimization.",
-        "savePhotosPermission": "This app needs save photos permission to save modified images to your photo library."
+        "NSPhotoLibraryUsageDescription": "This app needs photos permission to select images for colorblind optimization.",
+        "NSCameraUsageDescription": "This app needs camera permission to capture images for colorblind optimization.",
+        "NSPhotoLibraryAddUsageDescription": "This app needs save photos permission to save modified images to your photo library."
       }
     },
     "android": {
