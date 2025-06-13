@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, Dimensions, ActivityIndicator, Alert, TouchableOpacity, Text } from 'react-native';
+import { View, Image, StyleSheet, Dimensions, ActivityIndicator, Alert, TouchableOpacity, Text, Animated, Easing } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -42,6 +42,7 @@ export default function PreviewScreen({ image, setImage }: any) {
   const [imgHeight, setImgHeight] = useState<number>(0);
   const [tab, setTab] = useState('original');
   const [isLightboxVisible, setIsLightboxVisible] = useState(false);
+  const [fadeAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
     if (image) {
@@ -124,6 +125,44 @@ export default function PreviewScreen({ image, setImage }: any) {
     }
   };
 
+  const handleSave = async () => {
+    try {
+      const { status } = await MediaLibrary.getPermissionsAsync();
+      if (status !== 'granted') {
+        const { status: newStatus } = await MediaLibrary.requestPermissionsAsync();
+        if (newStatus !== 'granted') {
+          Alert.alert('Permission denied', 'Media library permission is required to save images.');
+          return;
+        }
+      }
+  
+      const uriToSave = tab === 'original' ? image : processedImageUri;
+      if (!uriToSave) return;
+  
+      const asset = await MediaLibrary.createAssetAsync(uriToSave);
+      await MediaLibrary.createAlbumAsync("See Colors", asset, false);
+
+      fadeAnim.setValue(0);
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
+        }),
+        Animated.delay(900),
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.in(Easing.ease),
+        }),
+      ]).start();
+    } catch (err) {
+      // Intentionally ignore save failure
+    }
+  };
+  
   return (
     <View style={styles.container}>
 
@@ -197,8 +236,20 @@ export default function PreviewScreen({ image, setImage }: any) {
         imageIndex={0}
         visible={isLightboxVisible}
         onRequestClose={() => setIsLightboxVisible(false)}
-      />
+        FooterComponent={() => (
+          <>
+            <View style={styles.lightboxFooter}>
+              <TouchableOpacity onPress={handleSave} style={styles.footerButton}>
+                <Text style={styles.footerButtonText}>Save Image</Text>
+              </TouchableOpacity>
+            </View>
 
+            <Animated.View style={[styles.overlayInLightbox, { opacity: fadeAnim }]}>
+              <Animated.Image source={require('./assets/saved.png')} style={styles.savedImage} />
+            </Animated.View>
+          </>
+        )}
+      />
     </View>
   );
 }
@@ -271,5 +322,35 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold',
+  },
+  lightboxFooter: {
+    position: 'absolute',
+    bottom: 40,
+    width: '100%',
+    alignItems: 'center',
+  },
+  footerButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  footerButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  overlayInLightbox: {
+    position: 'absolute',
+    bottom: height * 0.4,
+    width: '100%',
+    alignItems: 'center',
+  },
+    savedImage: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    borderRadius: 30,
+    opacity: 0.6,
   },
 });
