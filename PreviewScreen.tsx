@@ -140,7 +140,6 @@ export default function PreviewScreen({ image, setImage }: any) {
       if (!uriToSave) return;
   
       const asset = await MediaLibrary.createAssetAsync(uriToSave);
-      await MediaLibrary.createAlbumAsync("See Colors", asset, false);
 
       fadeAnim.setValue(0);
       Animated.sequence([
