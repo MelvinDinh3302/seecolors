@@ -32,12 +32,11 @@
 - Expo ImagePicker
 - Lottie React Native
 
-## ⚠️ Minor Issues
+## ⚠️ Minor Issue(s)
 
 - Android 13+: Due to scoped storage changes, Expo MediaLibrary must request access to **images, videos, and audio** even though the app only handles photos. This may lead to misleading permission prompts.
-- iOS (Limited Photo Access): If the app is granted only limited access to the photo library, the save animation may not appear, even though the image is still saved successfully.
 
 ## 📽️ Demo
 
-https://github.com/user-attachments/assets/bc7e27d6-2f50-419a-a250-fa311e4a7060
+https://github.com/user-attachments/assets/d121d51e-7e44-45c4-8c9b-3a26d8bc96f0
 
