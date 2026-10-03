@@ -127,9 +127,9 @@ export default function PreviewScreen({ image, setImage }: any) {
 
   const handleSave = async () => {
     try {
-      const { status } = await MediaLibrary.getPermissionsAsync();
+      const { status } = await MediaLibrary.getPermissionsAsync(true);
       if (status !== 'granted') {
-        const { status: newStatus } = await MediaLibrary.requestPermissionsAsync();
+        const { status: newStatus } = await MediaLibrary.requestPermissionsAsync(true);
         if (newStatus !== 'granted') {
           Alert.alert('Permission denied', 'Media library permission is required to save images.');
           return;
@@ -139,7 +139,7 @@ export default function PreviewScreen({ image, setImage }: any) {
       const uriToSave = tab === 'original' ? image : processedImageUri;
       if (!uriToSave) return;
   
-      const asset = await MediaLibrary.createAssetAsync(uriToSave);
+      await MediaLibrary.saveToLibraryAsync(uriToSave.split('?')[0]);
 
       fadeAnim.setValue(0);
       Animated.sequence([
