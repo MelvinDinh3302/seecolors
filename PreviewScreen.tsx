@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Dimensions, ActivityIndicator, Alert, TouchableOpacity, Text, Animated, Easing } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { Buffer } from 'buffer';
 import * as ImageManipulator from 'expo-image-manipulator';
 import DropDownPicker from 'react-native-dropdown-picker';
