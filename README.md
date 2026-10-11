@@ -11,8 +11,6 @@
 
 <a href="https://apps.apple.com/us/app/see-colors/id6747242092"><img src="badges/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" width="200"/></a><a href="https://play.google.com/store/apps/details?id=com.melvindinh.seecolors"><img src="badges/GetItOnGooglePlay_Badge_Web_color_English.png" width="220"/></a>
 
-**Note for Android users**: *See Colors* is currently in **closed testing** on Google Play. To try it out now, [download the latest APK](https://github.com/melvindinh3302/seecolors/releases/latest).
-
 ## Features
 
 - **Advanced Algorithm**: Powered by a Flask backend with optimized daltonization.
