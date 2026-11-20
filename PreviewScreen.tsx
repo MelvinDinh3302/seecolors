@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, Dimensions, ActivityIndicator, Alert, TouchableOpacity, Text, Animated, Easing } from 'react-native';
+import { View, Image, ScrollView, StyleSheet, Dimensions, ActivityIndicator, Alert, TouchableOpacity, Text, Animated, Easing } from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Buffer } from 'buffer';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -186,7 +186,12 @@ export default function PreviewScreen({ image, setImage }: any) {
         }),
       ]).start();
     } catch (err) {
-      // Intentionally ignore save failure
+      console.error('Save image error:', err);
+
+      Alert.alert(
+        'Save failed',
+        'Unable to save the image. Please try again.'
+      );
     }
   };
   
@@ -300,13 +305,6 @@ export default function PreviewScreen({ image, setImage }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingTop: 50,
-    backgroundColor: '#f0f4f8',
-  },
   image: {
     width: width,
     height: height * 0.4,
