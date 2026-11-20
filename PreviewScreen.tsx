@@ -7,8 +7,12 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import ImageViewing from 'react-native-image-viewing';
 import * as MediaLibrary from 'expo-media-library';
 import Slider from '@react-native-community/slider';
+import ColorPalette, { PaletteColor } from './ColorPalette';
 
-
+type ImagePalettes = {
+  original: PaletteColor[];
+  daltonized: PaletteColor[];
+};
 const { width, height } = Dimensions.get('window');
 const DEFAULT_SEVERITY = 1;
 
@@ -21,25 +25,7 @@ export default function PreviewScreen({ image, setImage }: any) {
     { label: 'Protanopia', value: 'p' },
     { label: 'Tritanopia', value: 't' },
   ]);
-  const descriptions: Record<string, { type: string; text1: string; text2: string; }> = {
-    d: {
-      type: 'Deuteranopia',
-      text1: 'is a form of red-green color blindness in which green tones are difficult to tell apart. Greens may appear dull or confused with reds and browns.',
-      text2: 'adjusts the image to make green tones more discernible for affected individuals.',
-    },
-    p: {
-      type: 'Protanopia',
-      text1: 'is a form of red-green color blindness in which red tones are difficult to tell apart. Reds may appear dull or confused with greens and browns.',
-      text2: 'adjusts the image to make red tones more discernible for affected individuals.',
-    },
-    t: {
-      type: 'Tritanopia',
-      text1: 'is a form of blue-yellow color blindness in which blue tones are difficult to tell apart. Blues may appear dull or confused with greens and grays.',
-      text2: 'adjusts the image to make blue tones more discernible for affected individuals.',
-    },
-  };
-    
-
+  const [palettes, setPalettes] = useState<ImagePalettes | null>(null);    
   const [processedImageUri, setProcessedImageUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [imgWidth, setImgWidth] = useState<number>(0);
@@ -60,11 +46,20 @@ export default function PreviewScreen({ image, setImage }: any) {
     }
   }, [image]);
 
+  useEffect(() => {
+    setPalettes(null);
+    setProcessedImageUri(null);
+    setTab('original');
+  }, [image, value, severity]);
+
   const handleUpload = async () => {
     if (!image) return;
   
     try {
       setLoading(true);
+      setPalettes(null);
+      setProcessedImageUri(null);
+      setTab('original');
 
       const MAX_WIDTH = 1200;
       const MAX_HEIGHT = 1600;
@@ -107,10 +102,34 @@ export default function PreviewScreen({ image, setImage }: any) {
       });
   
       if (!response.ok) {
-        throw new Error(`Upload failed with status ${response.status}`);
+        throw new Error(
+          `Upload failed with status ${response.status}`
+        );
       }
-  
-      const blob = await response.blob();
+
+      // Read the palette from the response header.
+      const paletteHeader =
+        response.headers.get('X-Color-Palettes');
+
+      let newPalettes: ImagePalettes | null = null;
+
+      if (paletteHeader) {
+        try {
+          const parsed = JSON.parse(paletteHeader);
+
+          if (
+            Array.isArray(parsed.original) &&
+            Array.isArray(parsed.daltonized)
+          ) {
+            newPalettes = parsed as ImagePalettes;
+          }
+        } catch (error) {
+          console.warn('Invalid palette data:', error);
+        }
+      }
+
+      // The response body is still the corrected JPEG.
+      const blob = await response.blob();      
       const reader = new Response(blob);
       const buffer = await reader.arrayBuffer();
       const base64 = Buffer.from(buffer).toString('base64');
@@ -121,6 +140,7 @@ export default function PreviewScreen({ image, setImage }: any) {
       });
   
       setProcessedImageUri(fileUri + `?t=${Date.now()}`);
+      setPalettes(newPalettes);
       setTab('daltonized');
     } catch (err: any) {
       console.error('Image processing error:', err);
@@ -206,7 +226,7 @@ export default function PreviewScreen({ image, setImage }: any) {
           minimumValue={0}
           maximumValue={1}
           step={0.1}
-          value={DEFAULT_SEVERITY}
+          value={severity}
           onValueChange={setSeverity}
           disabled={loading}
         />
@@ -234,19 +254,17 @@ export default function PreviewScreen({ image, setImage }: any) {
         listMode="SCROLLVIEW"
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
+        disabled={loading}
       />
 
-      <View style={styles.descriptionBox}>
-        <Text style={styles.descriptionText}>
-          <Text style={styles.boldText}>{descriptions[value].type}</Text>
-          {' '}
-          {descriptions[value].text1}
-          {' '}
-          <Text style={styles.boldText}>See Colors</Text>
-          {' '}
-          {descriptions[value].text2}
-        </Text>
-      </View>
+      <ColorPalette
+        colors={
+          tab === 'original'
+            ? palettes?.original ?? []
+            : palettes?.daltonized ?? []
+        }
+        loading={loading}
+      />
 
       <ImageViewing
         images={[{ uri: tab === 'original' ? image : processedImageUri || image }]}
@@ -322,23 +340,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
-  },
-  descriptionBox: {
-    backgroundColor: '#e9ecef',
-    borderRadius: 10,
-    padding: 12,
-    marginTop: 12,
-    width: width * 0.95,
-    alignSelf: 'center',
-    borderWidth: 1,
-    borderColor: '#ced4da',
-  },
-  descriptionText: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  boldText: {
-    fontWeight: 'bold',
   },
   lightboxFooter: {
     position: 'absolute',
