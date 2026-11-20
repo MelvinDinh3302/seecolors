@@ -6,10 +6,14 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ImageViewing from 'react-native-image-viewing';
 import * as MediaLibrary from 'expo-media-library';
+import Slider from '@react-native-community/slider';
+
 
 const { width, height } = Dimensions.get('window');
+const DEFAULT_SEVERITY = 1;
 
 export default function PreviewScreen({ image, setImage }: any) {
+  const [severity, setSeverity] = useState(DEFAULT_SEVERITY);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('d');
   const [items, setItems] = useState([
@@ -87,6 +91,7 @@ export default function PreviewScreen({ image, setImage }: any) {
 
       const formData = new FormData();
       formData.append('type', value);
+      formData.append('severity', severity.toFixed(1));
       formData.append('image', {
         uri: manipulatedImage.uri,
         name: 'image.jpg',
@@ -193,6 +198,19 @@ export default function PreviewScreen({ image, setImage }: any) {
           </TouchableOpacity>
         </>
       )}
+
+      <View style={{ width: '80%' }}>
+        <Text>Correction strength ({severity.toFixed(1)})</Text>
+        <Slider
+          accessibilityLabel="Correction strength"
+          minimumValue={0}
+          maximumValue={1}
+          step={0.1}
+          value={DEFAULT_SEVERITY}
+          onValueChange={setSeverity}
+          disabled={loading}
+        />
+      </View>
 
       <TouchableOpacity 
         style={[styles.button, loading && styles.buttonDisabled]} 
