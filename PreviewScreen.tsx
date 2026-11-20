@@ -61,19 +61,22 @@ export default function PreviewScreen({ image, setImage }: any) {
       setProcessedImageUri(null);
       setTab('original');
 
-      const MAX_WIDTH = 1200;
-      const MAX_HEIGHT = 1600;
-      
-      const actions = [];
-      
-      if (imgWidth > MAX_WIDTH || imgHeight > MAX_HEIGHT) {
-        actions.push({
+    const MAX_WIDTH = 1200;
+    const MAX_HEIGHT = 1600;
+
+    const scale = Math.min(
+      1,
+      MAX_WIDTH / imgWidth,
+      MAX_HEIGHT / imgHeight
+    );
+
+    const actions = scale < 1
+      ? [{
           resize: {
-            width: imgWidth >= imgHeight ? MAX_WIDTH : undefined,
-            height: imgHeight > imgWidth ? MAX_HEIGHT : undefined
-          }
-        });
-      }
+            width: Math.round(imgWidth * scale),
+          },
+        }]
+      : [];
 
       const manipulatedImage = await ImageManipulator.manipulateAsync(
         image,
@@ -93,14 +96,14 @@ export default function PreviewScreen({ image, setImage }: any) {
         type: 'image/jpeg',
       } as any);
   
-      const response = await fetch('https://daltonize-api.up.railway.app/daltonize', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
+      const response = await fetch(
+        'https://daltonize-api.up.railway.app/daltonize',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );  
+
       if (!response.ok) {
         throw new Error(
           `Upload failed with status ${response.status}`
@@ -188,7 +191,14 @@ export default function PreviewScreen({ image, setImage }: any) {
   };
   
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: '#f0f4f8' }}
+      contentContainerStyle={{
+        alignItems: 'center',
+        paddingTop: 50,
+        paddingBottom: 32,
+      }}
+    >
 
       {image && (
         <>
@@ -235,7 +245,7 @@ export default function PreviewScreen({ image, setImage }: any) {
       <TouchableOpacity 
         style={[styles.button, loading && styles.buttonDisabled]} 
         onPress={handleUpload}
-        disabled={loading}
+        disabled={loading || imgWidth === 0 || imgHeight === 0}
       >
         {loading ? (
           <ActivityIndicator size="small" color="#ffffff" />
@@ -251,7 +261,7 @@ export default function PreviewScreen({ image, setImage }: any) {
         setOpen={setOpen}
         setValue={setValue}
         setItems={setItems}
-        listMode="SCROLLVIEW"
+        listMode="MODAL"
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={loading}
@@ -285,7 +295,7 @@ export default function PreviewScreen({ image, setImage }: any) {
           </>
         )}
       />
-    </View>
+    </ScrollView>
   );
 }
 
