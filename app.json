@@ -3,7 +3,7 @@
     "name": "See Colors",
     "slug": "see-colors",
     "version": "1.0.2",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,

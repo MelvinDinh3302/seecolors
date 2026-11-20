@@ -1,6 +1,5 @@
 import React from 'react';
-import { useRef, useEffect } from 'react';
-import { TouchableOpacity, Text, View, StyleSheet, Alert } from 'react-native';
+import { TouchableOpacity, ScrollView, Text, View, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import LottieView from 'lottie-react-native';
 
@@ -35,33 +34,43 @@ export default function PickImageScreen({ navigation, setImage }: any) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
       <Text style={styles.title}>See Colors</Text>
-      <Text style={styles.subtitle}>Bringing clarity to color</Text>
+        <Text style={styles.subtitle}>Bringing clarity to color</Text>
 
-      <LottieView
-        source={require('./assets/bubble.json')}
-        autoPlay
-        loop
-        style={styles.animation}
-      />
+        <LottieView
+          source={require('./assets/bubble.json')}
+          autoPlay
+          loop
+          style={styles.animation}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Choose an Image</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={takePhoto}>
-        <Text style={styles.buttonText}>Take a photo</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.button} onPress={pickImage}>
+          <Text style={styles.buttonText}>Choose an Image</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={takePhoto}>
+          <Text style={styles.buttonText}>Take a photo</Text>
+        </TouchableOpacity>
+
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+  flex: 1,
+  backgroundColor: '#f0f4f8',
+  },
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f0f4f8',
+    paddingHorizontal: 16,
+    paddingVertical: 24,
   },
   title: {
     fontSize: 28,
