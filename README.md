@@ -35,7 +35,7 @@
 
 - Android 13+: Due to scoped storage changes, Expo MediaLibrary must request access to **images, videos, and audio** even though the app only handles photos. This may lead to misleading permission prompts.
 
-## Demo
+## Demo (Beta)
 
 https://github.com/user-attachments/assets/d121d51e-7e44-45c4-8c9b-3a26d8bc96f0
 
