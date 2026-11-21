@@ -266,7 +266,7 @@ export default function PreviewScreen({ image, setImage }: any) {
         setOpen={setOpen}
         setValue={setValue}
         setItems={setItems}
-        listMode="MODAL"
+        listMode="SCROLLVIEW"
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={loading}
